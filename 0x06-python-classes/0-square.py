@@ -2,5 +2,5 @@
 """ Define an empty class """
 
 class Square:
-    """Class Square defined """
+    """ Class Square defined """
     pass
