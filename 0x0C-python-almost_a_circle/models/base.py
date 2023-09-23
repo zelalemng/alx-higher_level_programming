@@ -1,82 +1,85 @@
-#!/usr/bin/python3
-"""contains tests for Base class"""
-import unittest
-import inspect
-import pep8
-import json
-from models import base
-Base = base.Base
+#!/user/bin/python3
+"""models for base class"""
+from json import dumps, loads
+import csv
 
-class TestBaseDocs(unittest.TestCase):
-    """Tests to check the documentation and style of Base class"""
+class Base:
+    """A representation of the base of our OOP hierarchy"""
+    __nb_objects = 0
+    def __init__(self, id=None):
+        """Contructor"""
+        if id is not None:
+            self.id = id
+        else:
+            Base.__nb_objects += 1
+            self.id = Base.__nb_objects
+    @staticmethod
+    def to_json_string(list_dictionaries):
+        if list_dictionaries is None or not list_dictionaries:
+            return "[]"
+        else:
+            return dumps(list_dictionaries)
+    @staticmethod
+    def from_json_string(json_string):
+        if json_string is None or not json_string:
+            return []
+        return loads(json_string)
     @classmethod
-    def setUpClass(cls):
-        cls.base_funcs = inspect.getmembers(Base, inspect.isfunction)
-    def test_pep8_conformance_base(self):
-        pep8style = pep8.StyleGuide(quiet=True)
-        result = pep8style.check_files(['models/base.py'])
-        self.assertEqual(result.total_errors, 0,
-                "|Found code style errors (and warnigs).")
-    def test_pep8_conformance_test_base(self):
-        pep8style = pep8.StyleGuide(quiet=True)
-        result = pep8style.check_file(['tests/test_moduls/test_base.py'])
-        self.assertEqual(result.total_errors, 0,
-                "Found code style errors (and warnings).")
-    def test_module_docstring(self):
-        self.assertTrue(len(base.__doc__) >= 1)
-    def test_class_docstring(self):
-        self.assertTrue(len(Base.__doc__) >= 1)
-    def test_func_docstring(self):
-        for func in self.base_funcs:
-            self.assertTrue(len(func[1].__doc__) >= 1)
-class TestBase(unittest.TestCase):
-    def test_too_many_args(self):
-        with self.assertRaises(typeError):
-            b = Base(1, 1)
-    def test_no_id(self):
-        b = Base()
-        self.assertEqual(b.id, 1)
-    def test_id_set(self):
-        b98 = Base(98)
-        self.assertEqual(b98.id, 98)
-    def test_no_id_after_set(self):
-        b2 = Base()
-        self.assertEqual(b2.id, 2)
-    def test_nb_private(self):
-        b = Base(3)
-        with self.assertRaises(AttributeError):
-            print(b.nb_objects)
-        with self.assertRaises(AttributeError):
-            print(b.__nb_objects)
-    def test_to_json_string(self):
-        Base._Base__nb_objects = 0
-        d1 = {"id": 9, "width": 5, "height": 6, "x": 7, "y": 8}
-        d1 = {"id": 2, "width": 2, "height": 3, "x": 4, "y": 0}
-        json_s = Base.to_json_string([d1, d2])
-        self.assertTrue(type(json_s) is str)
-        d = json.loads(json_s)
-        self.assertEqual(d, [d1, d2])
-    def test_empty_to_json_string(self):
-        json_s = Base.to_json_string([])
-        self.assertTrue(type(json_s) is str)
-        self.assertEqual(json_s, "[]")
-     def test_None_to_json_String(self):
-        json_s = Base.to_json_string([None])
-        self.assertTrue(type(json_s) is str)
-        self.assertEqual(json_s, "[]")
-    def test_from_json_string(self):
-        json_str = '[{"id": 9, "width": 5, "height": 6, "x": 7, "y": 8}, \ 
-        {"id": 2, "width": 2, "height": 3, "x": 4, "y": 0}]'
-        json_l = Base.from_json_string(json_str)
-        self.assertTrue(type(json_l) is list)
-        self.assertEqual(type(json_l), 2)
-        self.assertTrue(type(json_l[0]) is dict)
-        self.assertTrue(type(json_l[1]) is dict)
-        self.assertTrue(type(json_l[0],
-            {"id": 9, "width": 5, "height": 6, "x": 7, "y": 8})
-        self.assertTrue(type(json_l[1], 
-            {"id": 2, "width": 2, "height": 3, "x": 4, "y": 0})
-    def test_fjs_empty(self):
-        self.assertEqual([], Base.from_json_string(""))
-    def test_fjs_None(self):
-        self.assertEqual([], Base.from_json_string(None))
+    def save_to_file(cls,list_objs):
+        if list_objs is not None:
+            list_objs = [o.to_dictionary() for o in list_objs]
+        with open("{}.json".format(cls.__name__), "w", encoding="utf-8") as f:
+            f.write(cls.to_json_string(list_objs))
+
+    @classmethod
+    def create(cls, **dictionary):
+        from models.rectangle import Rectangle
+        from models.square import Square
+        if cls is Rectangle:
+            new = Rectangle(1, 1)
+        elif cls is Square:
+            new = Square(1)
+        else:
+            new = None
+        new.update(**dictionary)
+        return new
+    @classmethod
+    def load_from_file(cls):
+        from os import path
+        file = "{}.json".format(cls.__name__)
+        if not path.isfile(file):
+            return []
+        with open(file, "r", encoding="utf-8") as f:
+            return [cls.create(**d) for d in cls.from_json_string(f.read())]
+    @classmethod
+    def save_to_file_csv(cls, list_objs):
+        from models.rectangle import Rectangle
+        from models.square import Square
+        if list_objs is not None:
+            if cls is Rectangle:
+                list_objs = [[o.id, o.width, o.height, o.x, o.y]
+                        for o in list_objs]
+            else:
+                list_objs = [[o.id, o.size, o.x, o.y] for o in list_objs]
+        with open('{}.csv'.format(cls.__name__), 'w', newline='',
+                encoding='utf-8') as f:
+            writer = csv.writer(f)
+            writer.writerows(list_objs)
+    @classmethod
+    def load_from_file_csv(cls):
+        from models.rectangle import Rectangle
+        from models.square import Square
+        ret = []
+        with open('{}.csv'.format(cls.__name__), 'r', newline='',
+                encoding='utf-8') as f:
+            reader = csv.reader(f)
+            for row in reader:
+                row = [int(r) for r in row]
+                if cls is Rectangle:
+                    d = {"id": row[0], "width": row[1], "height": row[2],
+                            "x": row[3], "y": row[4]}
+                else:
+                    d = {"id": row[0], "size": row[1], "x": row[2],
+                            "y": row[3]}
+                ret.append(cls.create(**d))
+        return ret
