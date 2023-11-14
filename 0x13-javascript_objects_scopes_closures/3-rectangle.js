@@ -8,7 +8,7 @@ class Rectangle {
 	}
 	print () {
 		for (let i = 0; i < this.height; i++) {
-			lets = '';
+			let s = '';
 			for (let j = 0; j < this.width; j++) {
 				s += 'X';
 			}
@@ -16,4 +16,4 @@ class Rectangle {
 		}
 	}
 }
-modele.exports = Rectangle;
+module.exports = Rectangle;
