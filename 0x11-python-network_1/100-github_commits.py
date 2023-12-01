@@ -1,6 +1,7 @@
 #!/usr/bin/python3
-""" list 10 commits (from the most recent to oldest) of
-the respository and user sent in as arguments"""
+"""List 10 commits (from the most recent to oldest) of
+the respository and user sent in as arguments
+"""
 
 import requests
 import sys
