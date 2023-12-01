@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 """ Fetching URLs with urllib """
 
-import urlib.request
+import urllib.request
 
 if __name__ == "__main__":
-    with urlib.request.urlopen('https://alx-intarnet.hbtn.io/status') as request:
+    with urllib.request.urlopen('https://alx-intranet.hbtn.io/status') as request:
         response = request.read()
         print("Body response:")
         print("\t- type: {}".format(type(response)))
