@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 """ Fetching URLs with urllib """
 
-import urllib.request
+import urlib.request
 
 if __name__ == "__main__":
-    with urllib.request.urlopen('https://alx-internet.hbtn.io/status') as request:
+    with urlib.request.urlopen('https://alx-intarnet.hbtn.io/status') as request:
         response = request.read()
         print("Body response:")
-        print("\t- type: {}\n\t- content: {}\n\t- utf8 content: {}"
-                .format(type(html), html, html.decode('utf-8')))
+        print("\t- type: {}".format(type(response)))
+        print("\t- content: {}".format(response))
+        print("\t- utf8 content: {}".format(response.decode('utf-8')))
