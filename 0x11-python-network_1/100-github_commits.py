@@ -1,5 +1,6 @@
 #!/usr/bin/python3
-"""List 10 commits (from the most recent to oldest) of
+"""
+List 10 commits (from the most recent to oldest) of
 the respository and user sent in as arguments
 """
 
