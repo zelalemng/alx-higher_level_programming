@@ -3,12 +3,19 @@
 the respository and user sent in as arguments"""
 
 import requests
-from sys import argv
+import sys
 
 if __name__ == "__main__":
-    r = requests.get('https://api.github.com/repos/{}/{}/commits'
-            .format(argv[2], argv[1]))
+    repo_name = sys.argv[1]
+    owner = sys.argv[2]
+    url = 'https://api.github.com/repos/{}/{}/commits'.format(owner, repo_name))
+
+    request =requests.get(url)
     commits = r.json()
-    for commit in commits[:10]:
-        print(commit.get('sha'), end=': ')
-        print(commit.get('commit').get('author').get('name'))
+    try:
+        for i in range(10):
+            print('{}: {}'.format(
+                commits[i].get('sha'),
+                commits[i].get('commit').get('author').get('name')))
+    except IndexError:
+        pass
