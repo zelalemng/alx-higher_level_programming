@@ -8,10 +8,10 @@ import sys
 if __name__ == "__main__":
     repo_name = sys.argv[1]
     owner = sys.argv[2]
-    url = 'https://api.github.com/repos/{}/{}/commits'.format(owner, repo_name))
+    url = 'https://api.github.com/repos/{}/{}/commits'.format(owner, repo_name)
 
     request =requests.get(url)
-    commits = r.json()
+    commits = request.json()
     try:
         for i in range(10):
             print('{}: {}'.format(
