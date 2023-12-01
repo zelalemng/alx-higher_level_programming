@@ -4,8 +4,8 @@ List 10 commits (from the most recent to oldest) of
 the respository and user sent in as arguments
 """
 
-import requests
 import sys
+import requests
 
 if __name__ == "__main__":
     repo_name = sys.argv[1]
